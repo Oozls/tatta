@@ -110,6 +110,18 @@ def number_comma(num: str):
 
 app.jinja_env.filters["number_comma"] = number_comma
 
+def unix_to_date(t):
+    date = datetime.fromtimestamp(t)
+    today = datetime.today()
+    diff = today - date
+
+    if diff.days == 0:
+        return datetime.fromtimestamp(t).strftime('%H시 %M분 %S초')
+    else:
+        return datetime.fromtimestamp(t).strftime('%Y년 %m월 %d일')
+
+app.jinja_env.filters["unixtime"] = unix_to_date
+
 
 
 

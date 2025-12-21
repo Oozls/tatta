@@ -7,6 +7,7 @@ from os import getenv
 from bson import ObjectId
 from re import match
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from waitress import serve
 
 load_dotenv()
@@ -116,9 +117,9 @@ def unix_to_date(t):
     diff = today - date
 
     if diff.days == 0:
-        return datetime.fromtimestamp(t).strftime('%H시 %M분 %S초')
+        return datetime.fromtimestamp(t, tz=ZoneInfo("Asia/Seoul")).strftime('%H시 %M분 %S초')
     else:
-        return datetime.fromtimestamp(t).strftime('%Y년 %m월 %d일')
+        return datetime.fromtimestamp(t, tz=ZoneInfo("Asia/Seoul")).strftime('%Y년 %m월 %d일')
 
 app.jinja_env.filters["unixtime"] = unix_to_date
 

@@ -7,6 +7,7 @@ from os import getenv
 from bson import ObjectId
 from re import match
 from datetime import datetime
+from waitress import serve
 
 load_dotenv()
 
@@ -303,4 +304,4 @@ def admin_panel_ended_page():
 
 
 if __name__ == "__main__":
-    app.run(host = "0.0.0.0", port = 8000, debug = True)
+    serve(app, host='0.0.0.0', port=8000)

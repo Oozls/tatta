@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 팀 응원 시스템</title>
+    <style>
+        /* 이전 페이지들과 동일한 디자인 시스템 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 로그인 카드 컨테이너 */
+        .login-card {
+            background-color: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        /* 입력 그룹 스타일 */
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            margin-left: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            outline: none;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #3498db;
+            background-color: #f7fbff;
+        }
+
+        /* 로그인 버튼 */
+        .login-submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #333, #555);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .login-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* 하단 링크 (회원가입으로 유도) */
+        .footer-links {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .footer-links a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* 세로 모드 유도 오버레이 스타일 */
+        #orientation-overlay {
+            display: none; /* 기본적으로는 숨김 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #333;
+            color: white;
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #orientation-overlay .icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            /* 가로에서 세로로 세워지는 애니메이션 */
+            animation: rotateToPortrait 2s infinite;
+        }
+
+        /* 기기 세우기 애니메이션 */
+        @keyframes rotateToPortrait {
+            0% { transform: rotate(-90deg); } /* 가로 상태 */
+            50% { transform: rotate(0deg); }   /* 세로 상태 */
+            100% { transform: rotate(-90deg); }
+        }
+
+        /* 화면이 가로 모드(Landscape)일 때만 표시 */
+        @media screen and (orientation: landscape) {
+            #orientation-overlay {
+                display: flex;
+            }
+            /* 안내 화면이 뜰 때 배경 스크롤 방지 */
+            body {
+                overflow: hidden;
+            }
+        }
+
+        /* (선택사항) 데스크탑 브라우저에서는 보이지 않게 하려면 max-width를 추가하세요 */
+        @media screen and (min-width: 1024px) {
+            #orientation-overlay {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="login-card">
+        <h2>로그인</h2>
+        
+        <form action="/login" method="post">
+            <div class="input-group">
+                <label for="name">실명</label>
+                <input type="text" id="name" name="name" placeholder="이름을 입력해 주세요" required autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="number">학번</label>
+                <input type="text" id="number" name="number" placeholder="학번 4자리를 입력해 주세요" required autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input type="text" id="password" name="password" placeholder="비밀번호를 입력해 주세요" required autocomplete="off">
+            </div>
+
+            <button type="submit" class="login-submit-btn">로그인하기</button>
+        </form>
+
+        <div class="footer-links">
+            아직 계정이 없으신가요? <a href="/signup">회원가입</a>
+        </div>
+    </main>
+
+    <div id="orientation-overlay">
+        <div class="icon">🔄📱</div>
+        <h2>화면을 세로로 회전해 주세요</h2>
+        <p style="margin-top: 10px; opacity: 0.8;">
+            본 페이지는 세로 모드에 최적화되어 있습니다.<br>
+            더 나은 경험을 위해 기기를 세워주세요.
+        </p>
+    </div>
+</body>
+</html>

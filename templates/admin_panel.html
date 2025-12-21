@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 패널 - 팀 응원 시스템</title>
+    <style>
+        /* 기존 스타일 상속 및 초기화 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 100px;
+            padding-bottom: 50px;
+        }
+
+        /* 헤더 (대시보드와 동일) */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 20px;
+            background-color: rgba(240, 242, 245, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        /* 어드민 컨테이너 */
+        .admin-container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .admin-title {
+            margin-bottom: 30px;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .admin-title span {
+            display: block;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+
+        /* 설정 카드 섹션 */
+        .admin-card {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 버튼 + 입력창 한 쌍 (Row) */
+        .admin-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .admin-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        /* 기능 설명/라벨 */
+        .row-label {
+            flex: 1;
+            font-weight: 600;
+            color: #444;
+        }
+
+        /* 왼쪽 액션 버튼 */
+        .action-btn {
+            flex: 1.5;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #333, #555);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* 오른쪽 숫자 입력창 */
+        .number-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .number-input:focus {
+            border-color: #3498db;
+            background-color: #f8fbff;
+        }
+
+        /* 강조 색상 (우승팀 설정 등) */
+        .btn-win { background: linear-gradient(135deg, #ffd700, #f39c12); color: #333; }
+        .btn-reset { background: linear-gradient(135deg, #ff4d4d, #c0392b); }
+
+        /* 토스트 알림 (기존 스타일 활용) */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            background-color: #333;
+            color: white;
+            padding: 16px 28px;
+            border-radius: 12px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: 0.4s;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="/" class="btn btn-secondary">메인으로 돌아가기</a>
+        <a href="/logout" class="btn">로그아웃</a>
+    </header>
+
+    <main class="admin-container">
+        <h1 class="admin-title">
+            Admin Control Panel
+            <span>시스템의 주요 수치를 실시간으로 제어합니다.</span>
+        </h1>
+
+        <div class="admin-card">
+            <form action="/admin/panel/ended" method="post">
+                <div class="admin-row">
+                    <div class="row-label">우승팀 확정</div>
+                    <button type="submit" class="action-btn btn-win" onsubmit="this.disabled=true;">우승팀 결과 발표</button>
+                    <input type="number" class="number-input" id="winner-team" name="winner-team" placeholder="팀 번호" min="1" max="4">
+                </div>
+            </form>
+
+            <div class="admin-row">
+                <div class="row-label">전원 보너스</div>
+                <button class="action-btn" onclick="handleAction('bonus')">모든 유저 지급</button>
+                <input type="number" class="number-input" id="bonus-amount" placeholder="금액" step="100">
+            </div>
+
+            <div class="admin-row">
+                <div class="row-label">배당률 수동 조정</div>
+                <button class="action-btn" onclick="handleAction('odds')">배당률 강제 변경</button>
+                <input type="number" class="number-input" id="odds-value" placeholder="배율" step="0.1" min="1">
+            </div>
+
+            <div class="admin-row">
+                <div class="row-label">데이터 초기화</div>
+                <button class="action-btn btn-reset" onclick="handleAction('reset')">게임 초기화</button>
+                <input type="number" class="number-input" id="reset-code" placeholder="보안코드(123)">
+            </div>
+        </div>
+    </main>
+</body>
+</html>

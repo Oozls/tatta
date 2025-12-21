@@ -132,7 +132,10 @@ def main_page():
         '4':div(sum_money,total_money['4'])
     }
 
-    return render_template('main.html', total_money=total_money, rate=rate)
+    histories = list(history_collection.find())
+    histories.sort(key=lambda x : -x['time'])
+
+    return render_template('main.html', total_money=total_money, rate=rate, history=histories[0])
 
 
 

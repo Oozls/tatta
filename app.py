@@ -9,6 +9,7 @@ from re import match
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from waitress import serve
+from random import choice
 
 load_dotenv()
 
@@ -263,11 +264,13 @@ def betting_page():
 
 
 
+code = ['신앙은 덧없는 인간을 위하여', '달까지 닿아라 불사의 연기', '죽취비상', '성조기의 피에로', '죽은 왕녀를 위한 셉텟', '감정의 마천루', '요요발호', '유령악단', '우상에 세계를 맡기고', '네크로판타지아', '하르트만의 요괴소녀', '네이티브 페이스', '풍신소녀', '동쪽 나라의 잠들지 않는 밤']
+
 @app.route('/admin/panel', methods=['GET', 'POST'])
 @login_required
 def admin_panel_page():
     if current_user.is_admin():
-        return render_template('admin_panel.html')
+        return render_template('admin_panel.html', code=choice(code))
     return redirect('/')
 
 
@@ -296,8 +299,7 @@ def admin_panel_ended_page():
             
             def div(one, two):
                 if two==0: return 0
-                return round(one/two,2)
-            
+                return round(one/two,2) 
 
             operations = []
             for user in users:
@@ -316,5 +318,57 @@ def admin_panel_ended_page():
 
 
 
+@app.route('/admin/panel/bonus', methods=['POST'])
+@login_required
+def admin_panel_bonus_page():
+    if current_user.is_admin():
+        name = request.form.get('name')
+        number = request.form.get('number')
+        money = request.form.get('money')
+
+        target_user = user_collection.find_one({'name':name, 'number':int(number)})
+        if not target_user: flash('❌ 해당 사용자를 찾을 수 없습니다.')
+        else:
+            user_collection.update_one({'name':name, 'number':int(number)}, {'$inc':{'money':max(0, int(money))}})
+            flash(f'✅ {number} {name}에게 {money} 원을 지급했습니다.')
+
+    return redirect('/')
+
+
+
+
+@app.route('/admin/panel/reset', methods=['POST'])
+@login_required
+def admin_panel_reset_page():
+    if current_user.is_admin():
+        code = request.form.get('code')
+        typed_code = request.form.get('typed-code')
+
+        if code != typed_code: flash('❌ 보안 코드가 일치하지 않습니다..')
+        else:
+            operations = []
+            users = user_collection.find()
+            for user in users:
+                update_fields = {'money': 5000, 'current_team': None, 'betted_money': 0}
+                operations.append(UpdateOne({'_id': user['_id']}, {'$set': update_fields}))
+            user_collection.bulk_write(operations)
+
+            flash('✅ 모든 유저의 데이터가 초기화되었습니다.')
+
+    return redirect('/')
+
+
+
+
+@app.route('/ranking')
+def ranking_page():
+    users = list(user_collection.find())
+    users.sort(key=lambda x : -x['money'])
+    return render_template('ranking.html', users=users)
+
+
+
+
 if __name__ == "__main__":
+    #app.run(host='0.0.0.0', port=8000, debug=True)
     serve(app, host='0.0.0.0', port=8000)

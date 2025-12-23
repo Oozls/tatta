@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>팀 베팅하기 - 베팅 점수 입력</title>
+    <title>팀 응원 시스템 - 사용자 순위</title>
     <style>
         /* 기본 스타일 초기화 */
         * {
@@ -21,18 +21,19 @@
             align-items: center;
             position: relative;
             padding: 20px;
-            padding-top: 60px;
+            padding-top: 80px; /* 헤더 공간 확보 */
         }
 
-        /* 최상단 헤더 영역 - 양끝 정렬로 수정 */
+        /* 최상단 헤더 영역 - 양끝 정렬 */
         .header {
             position: absolute;
             top: 0;
             width: 100%;
             padding: 20px 40px;
             display: flex;
-            justify-content: space-between; /* 왼쪽과 오른쪽 끝으로 배치 */
+            justify-content: space-between;
             align-items: center;
+            z-index: 1000;
         }
 
         /* 돌아가기 버튼 스타일 */
@@ -53,15 +54,15 @@
 
         .back-btn:hover {
             background-color: #f8f9fa;
-            transform: translateX(-5px); /* 왼쪽으로 살짝 이동하는 효과 */
+            transform: translateX(-5px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        /* 오른쪽 그룹 (유저정보 + 로그인) */
+        /* 오른쪽 그룹 (유저정보 + 버튼들) */
         .header-right {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .user-status {
@@ -94,132 +95,137 @@
             border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
         }
 
-        /* 베팅 페이지 메인 컨테이너 */
-        .betting-main-container {
+        .btn:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        /* 메인 랭킹 컨테이너 */
+        .ranking-main-container {
             display: flex;
             background-color: white;
             width: 100%;
-            max-width: 800px;
-            height: 450px;
+            max-width: 900px; /* 랭킹 표를 위해 조금 더 넓게 설정 */
+            height: 600px;
             border-radius: 30px;
-            overflow: hidden; /* 모서리 밖으로 나가는 배경 자르기 */
+            overflow: hidden;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
 
-        /* 왼쪽: 팀 정보 박스 */
-        .team-preview {
-            flex: 1; /* 왼쪽 오른쪽 1:1 비율 */
+        /* 왼쪽: 명예의 전당 타이틀 박스 */
+        .ranking-sidebar {
+            flex: 0.7; 
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             color: white;
             text-align: center;
+            background: linear-gradient(135deg, #333, #555); /* 다크 모던 그라데이션 */
+            padding: 40px;
         }
 
-        /* 팀별 색상 (메인 페이지와 동일) */
-        .team-1 { background: linear-gradient(135deg, #ff4d4d, #ff6b6b); }
-        .team-2 { background: linear-gradient(135deg, #ffcc00, #ffe066); color: #333; }
-        .team-3 { background: linear-gradient(135deg, #3498db, #5dade2); }
-        .team-4 { background: linear-gradient(135deg, #2ecc71, #58d68d); }
-
-        .team-preview h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
+        .ranking-sidebar h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
             text-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        .team-preview p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+        .ranking-sidebar p {
+            font-size: 1rem;
+            opacity: 0.8;
+            line-height: 1.6;
         }
 
-        /* 오른쪽: 입력 폼 영역 */
-        .input-section {
-            flex: 1;
-            padding: 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        /* 오른쪽: 순위 리스트 영역 */
+        .list-section {
+            flex: 1.3;
+            padding: 40px;
+            overflow-y: auto; /* 리스트가 길어질 경우 대비 */
         }
 
-        .input-section h2 {
+        .list-section h2 {
             font-size: 1.5rem;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        .input-group {
             margin-bottom: 25px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .input-group label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #666;
+        /* 순위 아이템 스타일 */
+        .rank-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-radius: 15px;
             margin-bottom: 10px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            outline: none;
+            background-color: #f8f9fa;
             transition: 0.3s;
         }
 
-        .input-group input:focus {
-            border-color: #3498db;
-            background-color: #f7fbff;
+        .rank-item:hover {
+            background-color: #f1f3f5;
+            transform: scale(1.02);
         }
 
-        /* 최종 베팅하기 버튼 */
-        .submit-betting-btn {
-            width: 100%;
-            padding: 15px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 12px;
+        .rank-number {
+            font-weight: 800;
             font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
+            width: 40px;
+            color: #888;
         }
 
-        .submit-betting-btn:hover {
-            background-color: #555;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        /* TOP 3 특별 색상 */
+        .rank-1 .rank-number { color: #ffd700; font-size: 1.3rem; }
+        .rank-2 .rank-number { color: #c0c0c0; }
+        .rank-3 .rank-number { color: #cd7f32; }
+
+        .rank-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rank-name {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .rank-id {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .rank-money-val {
+            font-weight: 700;
+            color: #2ecc71;
         }
 
         /* 반응형 대응 */
-        @media (max-width: 768px) {
-            .betting-main-container {
+        @media (max-width: 850px) {
+            .ranking-main-container {
                 flex-direction: column;
                 height: auto;
+                max-height: 80vh;
             }
-            .team-preview {
-                padding: 40px;
+            .ranking-sidebar {
+                padding: 30px;
             }
         }
 
-        /* 가로 모드 유도 오버레이 스타일 */
+        /* 가로 모드 유도 오버레이 */
         #orientation-overlay {
-            display: none; /* 기본적으로는 숨김 */
+            display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #333;
-            color: white;
-            z-index: 9999; /* 최상단 배치 */
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #333; color: white;
+            z-index: 9999;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -233,22 +239,15 @@
             animation: rotateDevice 2s infinite;
         }
 
-        /* 기기 회전 애니메이션 */
         @keyframes rotateDevice {
             0% { transform: rotate(0deg); }
             50% { transform: rotate(-90deg); }
             100% { transform: rotate(0deg); }
         }
 
-        /* 화면 폭이 768px 이하이면서 세로 모드(Portrait)일 때만 표시 */
         @media screen and (max-width: 500px) and (orientation: portrait) {
-            #orientation-overlay {
-                display: flex;
-            }
-            /* 안내 화면이 뜰 때 배경 스크롤 방지 */
-            body {
-                overflow: hidden;
-            }
+            #orientation-overlay { display: flex; }
+            body { overflow: hidden; }
         }
     </style>
 </head>
@@ -261,47 +260,52 @@
         <div class="header-right">
             {% if current_user.is_authenticated %}
             <div class="user-status">
-                <span class="user-name">{{ current_user.get_name() }} 님
-                    {% if current_user.is_admin() %}
-                    (어드민)
-                    {% endif %}
-                </span>
+                <span class="user-name">{{ current_user.get_name() }} 님</span>
                 <span class="user-money">💰 {{ current_user.get_money() | number_comma }} 원</span>
             </div>
-            <a href="/logout"><button class="btn">로그아웃</button></a>
+            <a href="/logout" class="btn">로그아웃</a>
             {% if current_user.is_admin() %}
-            <a href="/admin/panel"><button class="btn">어드민 패널</button></a>
+            <a href="/admin/panel" class="btn">어드민 패널</a>
             {% endif %}
             {% else %}
-            <a href="/login"><button class="btn">로그인</button></a>
+            <a href="/login" class="btn">로그인</a>
             {% endif %}
             <a href="/ranking"><button class="btn">순위</button></a>
         </div>
     </header>
 
-    <main class="betting-main-container">
+    <main class="ranking-main-container">
         
-        <div class="team-preview team-{{ team }}">
-            <p>You are betting to</p>
-            <h1>{{ team }}팀</h1>
+        <div class="ranking-sidebar">
+            <p>Hall of Fame</p>
+            <h1>순위표</h1>
+            <p>현재 가장 많은 금액을<br>보유하고 있는 랭커들입니다.</p>
         </div>
 
-        <section class="input-section">
-            <h2>베팅 금액 입력</h2>
+        <section class="list-section">
+            <h2>실시간 랭킹 🔥</h2>
             
-            <form action="/betting" method="post">
-                <input type="hidden" name="team" value="{{ team }}">
-                <div class="input-group">
-                    <label for="betting-money">한 번 베팅하면 경기 종료 전까지 다시 베팅할 수 없습니다.</label>
-                    <input type="number" id="betting-money" name="money" placeholder="베팅할 금액의 액수를 입력하세요" min="100" max="{{ current_user.get_money() }}" required>
+            <div class="ranking-list">
+                {% for user in users %}
+                <div class="rank-item rank-{{ loop.index }}">
+                    <div class="rank-number">
+                        {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}
+                    </div>
+                    <div class="rank-info">
+                        <span class="rank-name">{{ user.name }}</span>
+                        <span class="rank-id">{{ user.number }}</span>
+                    </div>
+                    <div class="rank-money-val">
+                        {{ user.money | number_comma }} 원
+                    </div>
                 </div>
-
-                <button type="submit" class="submit-betting-btn" onsubmit="this.disabled=true;">팀 베팅하기 🚀</button>
-            </form>
+                {% else %}
+                <p style="text-align: center; padding: 50px; color: #999;">데이터가 없습니다.</p>
+                {% endfor %}
+            </div>
         </section>
 
     </main>
-
 
     <div id="orientation-overlay">
         <div class="icon">📱🔄</div>

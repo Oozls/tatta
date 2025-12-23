@@ -266,7 +266,7 @@
                  (어드민)
                 {% endif %}
             </span>
-            <span class="user-money">💰 {{ current_user.get_money() | number_comma }} 원</span>
+            <span class="user-money">💰 {{ current_user.get_money() | number_comma }} 포인트</span>
         </div>
         <a href="/logout"><button class="btn">로그아웃</button></a>
         {% if current_user.is_admin() %}
@@ -289,8 +289,8 @@
 
             <div class="team-stats">
                 <div class="stat-row">
-                    <span>총 배팅액</span>
-                    <span class="stat-value">{{ total_money['1'] | number_comma }} 원</span>
+                    <span>총 배팅 포인트</span>
+                    <span class="stat-value">{{ total_money['1'] | number_comma }}<br>포인트</span>
                 </div>
                 <div class="stat-row">
                     <span>현재 배당</span>
@@ -306,8 +306,8 @@
 
             <div class="team-stats">
                 <div class="stat-row">
-                    <span>총 배팅액</span>
-                    <span class="stat-value">{{ total_money['2'] | number_comma }} 원</span>
+                    <span>총 배팅 포인트</span>
+                    <span class="stat-value">{{ total_money['2'] | number_comma }}<br>포인트</span>
                 </div>
                 <div class="stat-row">
                     <span>현재 배당</span>
@@ -323,8 +323,8 @@
 
             <div class="team-stats">
                 <div class="stat-row">
-                    <span>총 배팅액</span>
-                    <span class="stat-value">{{ total_money['3'] | number_comma }} 원</span>
+                    <span>총 배팅 포인트</span>
+                    <span class="stat-value">{{ total_money['3'] | number_comma }}<br>포인트</span>
                 </div>
                 <div class="stat-row">
                     <span>현재 배당</span>
@@ -332,23 +332,6 @@
                 </div>
             </div>
             <a href="/betting?t=3">
-                <button class="betting-btn">베팅하기</button>
-            </a>
-        </div>
-        <div class="team-box team-4">
-            <h2>4팀</h2>
-
-            <div class="team-stats">
-                <div class="stat-row">
-                    <span>총 배팅액</span>
-                    <span class="stat-value">{{ total_money['4'] | number_comma }} 원</span>
-                </div>
-                <div class="stat-row">
-                    <span>현재 배당</span>
-                    <span class="stat-value">x {{ rate['4'] }}</span>
-                </div>
-            </div>
-            <a href="/betting?t=4">
                 <button class="betting-btn">베팅하기</button>
             </a>
         </div>

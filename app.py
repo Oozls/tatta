@@ -130,7 +130,7 @@ app.jinja_env.filters["unixtime"] = unix_to_date
 @app.route("/")
 def main_page():
     users = list(user_collection.find())
-    total_money = {'1':0,'2':0,'3':0,'4':0}
+    total_money = {'1':0,'2':0,'3':0}
     for user in users:
         if user['current_team'] != None:
             total_money[str(user['current_team'])] += int(user['betted_money'])
@@ -143,8 +143,7 @@ def main_page():
     rate = {
         '1':div(sum_money,total_money['1']),
         '2':div(sum_money,total_money['2']),
-        '3':div(sum_money,total_money['3']),
-        '4':div(sum_money,total_money['4'])
+        '3':div(sum_money,total_money['3'])
     }
 
     histories = list(history_collection.find())
@@ -171,9 +170,15 @@ def signup_page():
         name = request.form.get('name')
         number = request.form.get('number')
         password = request.form.get('password')
-        if not bool(match(r'^[가-힣]{2,4}$', name)): return redirect('/')
-        elif not is_valid_number(number): return redirect('/')
-        elif user_collection.find_one({'name':name, 'number':int(number)}): return redirect('/')
+        if not bool(match(r'^[가-힣]{2,4}$', name)):
+            flash('❌ 올바른 형식의 이름이 아닙니다.')
+            return redirect('/')
+        elif not is_valid_number(number):
+            flash('❌ 올바른 형식의 학번이 아닙니다.')
+            return redirect('/')
+        elif user_collection.find_one({'name':name, 'number':int(number)}):
+            flash('❌ 이미 존재하는 사용자입니다.')
+            return redirect('/')
 
         user_data = {
             'name':name,
@@ -237,8 +242,8 @@ def betting_page():
     if request.method == "POST":
         team = request.form.get('team')
         money = request.form.get('money')
-        if not (1<=int(team)<=4): flash("❌ 팀은 4개뿐입니다.")
-        elif int(money)<=0: flash("❌ 최소 1원이라도 거시죠?")
+        if not (1<=int(team)<=3): flash("❌ 팀은 3개뿐입니다.")
+        elif int(money)<=0: flash("❌ 최소 1 포인트라도 거시죠?")
         elif int(money)>current_user.get_money(): flash("❌ 가진 만큼만 거세요.")
         elif current_user.get_current_team() != None or current_user.get_betted_money() != 0: flash("❌ 이미 베팅하였습니다.")
         else:
@@ -251,7 +256,7 @@ def betting_page():
                 current_user.set_betted_money(int(money))
 
                 user_collection.update_one({'_id':ObjectId(current_user.get_id())}, {'$inc':{'money':-int(money)}, "$set":{"current_team":int(team), "betted_money":int(money)}})
-                flash(f"✅ {team}팀에 {money}원 베팅하였습니다.")
+                flash(f"✅ {team}팀에 {number_comma(money)} 포인트 베팅하였습니다.")
         return redirect('/')
     else:
         team = request.args.get("t", type=int)
@@ -281,8 +286,8 @@ def admin_panel_page():
 def admin_panel_ended_page():
     if current_user.is_admin():
         winner_team = request.form.get('winner-team')
-        if not (1<=int(winner_team)<=4):
-            flash("❌ 팀은 1부터 4까지라니까")
+        if not (1<=int(winner_team)<=3):
+            flash("❌ 팀은 1부터 3까지라니까")
         else:
             history_collection.insert_one({
                 "winner": int(winner_team),
@@ -291,7 +296,7 @@ def admin_panel_ended_page():
             })
             
             users = list(user_collection.find())
-            total_money = {'1':0,'2':0,'3':0,'4':0}
+            total_money = {'1':0,'2':0,'3':0}
             for user in users:
                 if user['current_team'] != None:
                     total_money[str(user['current_team'])] += int(user['betted_money'])
@@ -311,7 +316,7 @@ def admin_panel_ended_page():
                 operations.append(UpdateOne({'_id': user['_id']}, {'$set': update_fields}))
             user_collection.bulk_write(operations)
 
-            flash('✅ 경기 결과 등록 및 보유 금액 계산 완료')
+            flash('✅ 경기 결과 등록 및 보유 포인트 계산 완료')
 
     return redirect('/')
 
@@ -330,7 +335,7 @@ def admin_panel_bonus_page():
         if not target_user: flash('❌ 해당 사용자를 찾을 수 없습니다.')
         else:
             user_collection.update_one({'name':name, 'number':int(number)}, {'$set':{'money':max(0, target_user['money']+int(money))}})
-            flash(f'✅ {number} {name}에게 {number_comma(money)} 원을 지급했습니다.')
+            flash(f'✅ {number} {name}에게 {number_comma(money)} 포인트를 지급했습니다.')
 
     return redirect('/')
 

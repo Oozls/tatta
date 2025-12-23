@@ -261,7 +261,7 @@
             {% if current_user.is_authenticated %}
             <div class="user-status">
                 <span class="user-name">{{ current_user.get_name() }} 님</span>
-                <span class="user-money">💰 {{ current_user.get_money() | number_comma }} 원</span>
+                <span class="user-money">💰 {{ current_user.get_money() | number_comma }} 포인트</span>
             </div>
             <a href="/logout" class="btn">로그아웃</a>
             {% if current_user.is_admin() %}
@@ -279,7 +279,7 @@
         <div class="ranking-sidebar">
             <p>Hall of Fame</p>
             <h1>순위표</h1>
-            <p>현재 가장 많은 금액을<br>보유하고 있는 랭커들입니다.</p>
+            <p>현재 가장 많은 포인트를<br>보유하고 있는 랭커들입니다.</p>
         </div>
 
         <section class="list-section">
@@ -296,7 +296,7 @@
                         <span class="rank-id">{{ user.number }}</span>
                     </div>
                     <div class="rank-money-val">
-                        {{ user.money | number_comma }} 원
+                        {{ user.money | number_comma }} 포인트
                     </div>
                 </div>
                 {% else %}

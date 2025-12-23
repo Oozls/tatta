@@ -205,7 +205,7 @@
                     </div>
                     <div class="action-group">
                         <button type="submit" class="action-btn btn-win">우승팀 결과 발표</button>
-                        <input type="number" class="number-input" name="winner-team" placeholder="팀 번호" min="1" max="4">
+                        <input type="number" class="number-input" name="winner-team" placeholder="팀 번호" min="1" max="4" autocomplete="off">
                     </div>
                 </div>
             </form>
@@ -221,10 +221,10 @@
                     <div class="action-group">
                         <button type="submit" class="action-btn">변경 적용</button>
                         <div class="input-group-row">
-                            <input type="text" class="number-input" name="name" placeholder="이름">
-                            <input type="text" class="number-input" name="number" placeholder="학번">
+                            <input type="text" class="number-input" name="name" placeholder="이름" autocomplete="off">
+                            <input type="text" class="number-input" name="number" placeholder="학번" autocomplete="off">
                         </div>
-                        <input type="number" class="number-input" name="money" placeholder="금액 (예: 5000 또는 -2000)">
+                        <input type="number" class="number-input" name="money" placeholder="금액 (예: 5000 또는 -2000)" autocomplete="off">
                     </div>
                 </div>
             </form>
@@ -237,18 +237,12 @@
                     </div>
                     <div class="action-group">
                         <button type="submit" class="action-btn btn-reset">게임 초기화</button>
-                        <input type="hidden" name="code" value="{{ code }}">
-                        <input type="text" class="number-input" id="reset-code" name="typed-code" placeholder="'{{ code }}' 입력">
+                        <input type="hidden" name="code" value="{{ code }}" autocomplete="off">
+                        <input type="text" class="number-input" id="reset-code" name="typed-code" placeholder="'{{ code }}' 입력" autocomplete="off">
                     </div>
                 </div>
             </form>
         </div>
     </main>
-
-    <script>
-        function handleAction(actionType) {
-            console.log(actionType + ' 실행');
-        }
-    </script>
 </body>
 </html>

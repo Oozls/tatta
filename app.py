@@ -329,8 +329,8 @@ def admin_panel_bonus_page():
         target_user = user_collection.find_one({'name':name, 'number':int(number)})
         if not target_user: flash('❌ 해당 사용자를 찾을 수 없습니다.')
         else:
-            user_collection.update_one({'name':name, 'number':int(number)}, {'$inc':{'money':max(0, int(money))}})
-            flash(f'✅ {number} {name}에게 {money} 원을 지급했습니다.')
+            user_collection.update_one({'name':name, 'number':int(number)}, {'$set':{'money':max(0, target_user['money']+int(money))}})
+            flash(f'✅ {number} {name}에게 {number_comma(money)} 원을 지급했습니다.')
 
     return redirect('/')
 

@@ -20,7 +20,6 @@ MarkupSafe==3.0.3
 pycparser==2.23
 pymongo==4.15.5
 pyOpenSSL==25.3.0
-PyQt5Designer==5.14.1
 python-dotenv==1.2.1
 pytz==2025.2
 requests==2.32.5

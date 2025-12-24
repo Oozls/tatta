@@ -130,7 +130,7 @@ app.jinja_env.filters["unixtime"] = unix_to_date
 @app.route("/")
 def main_page():
     users = list(user_collection.find())
-    total_money = {'1':0,'2':0,'3':0}
+    total_money = {'1':0,'2':0}
     for user in users:
         if user['current_team'] != None:
             total_money[str(user['current_team'])] += int(user['betted_money'])
@@ -142,8 +142,7 @@ def main_page():
 
     rate = {
         '1':div(sum_money,total_money['1']),
-        '2':div(sum_money,total_money['2']),
-        '3':div(sum_money,total_money['3'])
+        '2':div(sum_money,total_money['2'])
     }
 
     histories = list(history_collection.find())
@@ -242,7 +241,7 @@ def betting_page():
     if request.method == "POST":
         team = request.form.get('team')
         money = request.form.get('money')
-        if not (1<=int(team)<=3): flash("❌ 팀은 3개뿐입니다.")
+        if not (1<=int(team)<=2): flash("❌ 팀은 2개뿐입니다.")
         elif int(money)<=0: flash("❌ 최소 1 포인트라도 거시죠?")
         elif int(money)>current_user.get_money(): flash("❌ 가진 만큼만 거세요.")
         elif current_user.get_current_team() != None or current_user.get_betted_money() != 0: flash("❌ 이미 베팅하였습니다.")
@@ -286,8 +285,8 @@ def admin_panel_page():
 def admin_panel_ended_page():
     if current_user.is_admin():
         winner_team = request.form.get('winner-team')
-        if not (1<=int(winner_team)<=3):
-            flash("❌ 팀은 1부터 3까지라니까")
+        if not (1<=int(winner_team)<=2):
+            flash("❌ 팀은 1부터 2까지라니까")
         else:
             history_collection.insert_one({
                 "winner": int(winner_team),
@@ -296,7 +295,7 @@ def admin_panel_ended_page():
             })
             
             users = list(user_collection.find())
-            total_money = {'1':0,'2':0,'3':0}
+            total_money = {'1':0,'2':0}
             for user in users:
                 if user['current_team'] != None:
                     total_money[str(user['current_team'])] += int(user['betted_money'])

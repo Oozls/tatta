@@ -293,7 +293,7 @@
                 <input type="hidden" name="team" value="{{ team }}">
                 <div class="input-group">
                     <label for="betting-money">한 번 베팅하면 경기 종료 전까지 다시 베팅할 수 없습니다.</label>
-                    <input type="number" id="betting-money" name="money" placeholder="베팅할 포인트의 액수를 입력하세요" min="100" max="{{ current_user.get_money() }}" required>
+                    <input type="number" id="betting-money" name="money" placeholder="베팅할 포인트의 액수를 입력하세요" min="1" max="{{ current_user.get_money() }}" required>
                 </div>
 
                 <button type="submit" class="submit-betting-btn" onsubmit="this.disabled=true;">팀 베팅하기 🚀</button>

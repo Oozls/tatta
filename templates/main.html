@@ -318,23 +318,6 @@
                 <button class="betting-btn">베팅하기</button>
             </a>
         </div>
-        <div class="team-box team-3">
-            <h2>3팀</h2>
-
-            <div class="team-stats">
-                <div class="stat-row">
-                    <span>총 배팅 포인트</span>
-                    <span class="stat-value">{{ total_money['3'] | number_comma }}<br>포인트</span>
-                </div>
-                <div class="stat-row">
-                    <span>현재 배당</span>
-                    <span class="stat-value">x {{ rate['3'] }}</span>
-                </div>
-            </div>
-            <a href="/betting?t=3">
-                <button class="betting-btn">베팅하기</button>
-            </a>
-        </div>
     </main>
 
     {% with messages = get_flashed_messages() %}
